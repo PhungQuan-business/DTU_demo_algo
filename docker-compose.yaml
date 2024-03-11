@@ -1,0 +1,40 @@
+# Use root/example as user/password credentials
+version: '3.8'
+
+services:
+
+  mongo:
+    image: mongo:latest
+    environment:
+      MONGGO_INITD_ROOT_USENAME: admin
+      MONGGO_INITD_ROOT_PASSWORD: admin
+    ports:
+      - 27017:27017
+    volumes:
+      - /DuyTan_algorithm_demo:/data/db # không mount kiểu /d/DuyTan_algorithm_demo:/data/db làm thế này sẽ bị lưu tất cả file hệ thống vào parent folder
+
+  recommendaion:
+    build: ./RS_API # cái này directory trên máy host không phải trong container
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongo
+    # environment:
+    #   - MONGO_HOST: localhost
+    #   - MONGO_PORT: 27017
+
+# volumes:
+#   ~/DuyTan_algorithm_demo:
+
+
+
+  # cái này là gì?
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #     - 8081:8081
+  #   environment:
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: example
+  #     ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
