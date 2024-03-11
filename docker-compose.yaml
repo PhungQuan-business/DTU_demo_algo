@@ -17,6 +17,8 @@ services:
     build: ./RS_API # cái này directory trên máy host không phải trong container
     ports:
       - 5000:5000
+    restart: 
+      unless-stopped
     depends_on:
       - mongo
     # environment:

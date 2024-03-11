@@ -36,11 +36,17 @@ app = Flask(__name__)
 
 SAVED_MODEL = SAVED_MODEL
 
+
+@app.route('/')
+def hello_world():
+    return "Hello world"
+
+
 @app.route("/get_prediction", methods=["GET"])
 def generate_and_predict():
     # Extract uid and iid from request parameters
-    uid = request.args.get('uid')
-    iid = request.args.get('iid')
+    uid = str(request.args.get('uid'))
+    iid = str(request.args.get('iid'))
 
     # Perform prediction using your model
     if SAVED_MODEL:
@@ -55,4 +61,4 @@ def generate_and_predict():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0")

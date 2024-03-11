@@ -2,7 +2,6 @@ scikit-surprise
 numpy
 pandas
 joblib
-aniso8601
 Flask
 flask-restplus
 Flask-RESTful
