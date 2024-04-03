@@ -1,0 +1,17 @@
+[
+    {
+        "$match": {
+            
+        }
+    },
+    {
+        "$project": {
+            "player_id": 1,
+            "degree": 1,
+            "ability": 1
+        }
+    },
+    {
+        "$limit": 10
+    }
+]

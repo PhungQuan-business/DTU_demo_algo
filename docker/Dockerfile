@@ -4,6 +4,9 @@
 # docker build + Dockerfile để tạo image
 # docker run để tạo container
 
+# File này đã bị move sang folder mới nên cần sửa lại đường dẫn
+
+
 FROM python:3.10.13-bullseye
 
 #change directory

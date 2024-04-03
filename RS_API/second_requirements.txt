@@ -1,8 +1,0 @@
-scikit-surprise
-numpy
-pandas
-joblib
-Flask
-flask-restplus
-Flask-RESTful
-pymongo

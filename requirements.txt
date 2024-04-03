@@ -1,1 +1,11 @@
 pymongo
+
+# cái này là dependencies để cài Surprise
+# scikit-surprise
+# numpy
+# pandas
+# joblib
+# Flask
+# flask-restplus
+# Flask-RESTful
+# pymongo

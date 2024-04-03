@@ -23,8 +23,9 @@ except Exception as e:
 
 # Query dữ liệu từ Mongo
 db = client['dtu']
-playersCollections = db['players']
-questionsCollections = db['questions']
+playersCollection = db['players']
+questionsCollection = db['questions']
+resultCollection = db['answered_questions']
 
 # cho cái template này vào 1 chỗ khác vì sẽ có nhiều template
 # TODO viết thêm template lọc dữ liệu trả về
@@ -37,6 +38,9 @@ template = [
     {"$limit": 10}  # Limiting to 500 records
 ]
 pipeline = [
+    {
+        "$match": {"level": 5}
+    },
     {"$project": {
         "_id": 1,
         "major": 1,
@@ -52,18 +56,19 @@ pipeline = [
 ]
 
 # Pull dữ liệu từ Atlas
-playerDataObject = playersCollections.aggregate(pipeline)
+playerDataObject = playersCollection.aggregate(pipeline)
 for batch in playerDataObject:
     # Process each batch of data
-    player_ids = batch["player_id"]
-    player_degree
-    questions_lists = batch["questions"]
-
-    print(f"Processing batch for player IDs: {player_ids}")
-    print(f"Questions lists: {questions_lists}")
+    # player_ids = batch["player_id"]
+    # # player_degree
+    # questions_lists = batch["questions"]
     
+    # print(f"Processing batch for player IDs: {player_ids}")
+    # print(f"Questions lists: {questions_lists}")
+    
+    print(batch)
     # Optionally, clear batch from memory
-    del batch
+    # del batch
 # player_df = pd.DataFrame(list(players_data))
 
 
