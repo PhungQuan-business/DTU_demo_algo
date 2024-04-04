@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from annoy import AnnoyIndex
 
 
@@ -8,18 +9,14 @@ def encode(majors):
         ohe[major] = 1  # Do major đang là số mới làm thế này nhé : )))
     return ohe
 
-# player là dict kiểu {"_id": ObjID(), "major": [], "degree": 1, ...}
-# players_collection là cái Collection của PyMongo ấy, hoặc sửa lại tùy :vvv
-def annoy_knn(player, players_collection, k=200):
-    # Kiểm tra xem đã có kết quả dự đoán chưa
-    # Nếu có trả về j đó :vvvv
-    if players_collection.find_one({'_id': player["_id"], 'status': 1}):
-        return
-
+# hàm này có thể trả về None khi tất cả người chơi đã được tính toán (status = 1)
+# nếu không trả về tối đa k thằng gần nhất
+def annoy_knn(degree, players_collection, k=200):
     index = AnnoyIndex(8)  # Hiện có 8 major
 
+    # Pipeline này tìm các document trùng degree và status khác 1 sau đó lấy 2 trường _id và major
     pipeline = [
-        {"$match": {"degree": player["degree"]}},
+        {"$match": {"degree": degree, "status": {"$ne": 1}}},
         {"$project": {"major": 1}}
     ]
     data = players_collection.aggregate(pipeline)
@@ -28,11 +25,17 @@ def annoy_knn(player, players_collection, k=200):
     for i, doc in enumerate(data):
         playerIDs_map[i] = doc["_id"]
         index.add_item(i, encode(doc["major"]))
+        
+    num_of_players = len(playerIDs_map)
+    
+    # Không còn người chơi nào trong cụm này...
+    if num_of_players == 0:
+        return
 
     # building the index
     index.build(n_trees=10)
 
     # getting indices of nearest neighbors
-    nearest_neighbors = index.get_nns_by_vector(encode(player["major"]), k)
+    nearest_neighbors = index.get_nns_by_item(random.randint(0, num_of_players - 1), 200)
 
     return (playerIDs_map[idx] for idx in nearest_neighbors) # Trả về generator
