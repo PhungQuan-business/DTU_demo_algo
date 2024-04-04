@@ -7,7 +7,19 @@
             "player_id": 1,
             "degree": 1,
             "ability": 1,
-            "segm": 1
+            "majot":1,
+            "mean_time_spent":1,
+            "std_time_spent":1,
+            "correct_ratio":1,
+            "mean_time_spent_easy":1,
+            "std_time_spent_easy":1,
+            "correct_ratio_easy":1,
+            "mean_time_spent_medium":1,
+            "std_time_spent_medium":1,
+            "correct_ratio_medium":1,
+            "mean_time_spent_hard":1,
+            "std_time_spent_hard":1,
+            "correct_ratio_hard":1
         }
     },
     {
