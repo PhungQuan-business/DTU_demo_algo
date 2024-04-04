@@ -7,7 +7,7 @@ from flask_restful import Resource, Api
 from pymongo import MongoClient
 import os
 
-from module.config.config import SAVED_MODEL
+from modules.config.config import SAVED_MODEL
 
 
 # Initialize mongoDB connection

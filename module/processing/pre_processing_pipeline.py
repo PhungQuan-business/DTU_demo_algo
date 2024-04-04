@@ -1,8 +1,22 @@
 import numpy as np
+import pymongo
+from bson import ObjectId
+'''
+đầu vào là danh sách id của 200 player
+'''
+def query_result_data(playerObjectIdList, collection):
+    # query = {"_id": {"$in": [ObjectId(player_id) for player_id in playerObjectIdList['nearest_players']]}}
+    # query = [collection.find({"player._id": ObjectId:f'{player_id}'} for player_id in playerObjectIdList['nearest_players'])]
+    000
+    query = [collection.find({'player._id':ObjectId(player_id)}) for player_id in playerObjectIdList['nearest_players']]
+    # print(query)
 
-# use for create unique user_id and question_id list
-def create_unique_id(input):
-    combined_id = np.concatenate(input, axis=0)
-    unique_id = np.unique(combined_id)
+    # # lấy được 
+    # cursor = collection.find(query)
 
-    return unique_id
+    # for player_data in cursor:
+    # # Process each player's data as needed
+    #     print(player_data)
+
+    # # Close the cursor, and free resources
+    # cursor.close()

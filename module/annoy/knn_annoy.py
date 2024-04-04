@@ -2,7 +2,6 @@ import numpy as np
 import random
 from annoy import AnnoyIndex
 
-
 def encode(majors):
     ohe = np.zeros(8, dtype=np.int8)  # Hiện có 8 major
     for major in majors:
