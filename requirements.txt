@@ -1,4 +1,7 @@
 pymongo
+scipy
+pandas
+numpy
 
 # cái này là dependencies để cài Surprise
 # scikit-surprise
