@@ -1,14 +1,13 @@
 [
     {
-        "$match": {
-            
-        }
+        "$match": {}
     },
     {
         "$project": {
             "player_id": 1,
             "degree": 1,
-            "ability": 1
+            "ability": 1,
+            "segm": 1
         }
     },
     {
