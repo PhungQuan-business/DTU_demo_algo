@@ -1,5 +1,5 @@
 import json
-def generate_monogo_template(template_file_path, iterable_list):
+def generate_monogo_pipeline(template_file_path, iterable_list):
     
     """ Tạo template để đem vào aggregation pipepline
 
@@ -22,3 +22,4 @@ def generate_monogo_template(template_file_path, iterable_list):
         pipline_list.append(pipeline)
 
     return pipline_list
+
