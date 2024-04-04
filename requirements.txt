@@ -2,6 +2,7 @@ pymongo
 scipy
 pandas
 numpy
+annoy
 
 # cái này là dependencies để cài Surprise
 # scikit-surprise
