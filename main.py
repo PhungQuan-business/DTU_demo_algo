@@ -5,16 +5,19 @@ import pandas as pd
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-# import calculate_IFF, estimate_IRT_params
-from ..config import config 
+from module.processing.pipeline import generate_monogo_template
 
-# Initial Mongo Atlas Client | chuyển thành function
-username = 'admin'
-password ='admin123'
-uri = f'mongodb+srv://{username}:{password}@cluster0.jmil5cr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0' # cái này đẩy vào configure
-client = MongoClient(uri, server_api=ServerApi('1'))
+
+
+# Initial Mongo Atlas Client
+def initialCLient(username, password):
+    uri = f'mongodb+srv://{username}:{password}@cluster0.jmil5cr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0' # cái này đẩy vào configure
+    return MongoClient(uri, server_api=ServerApi('1')) 
 
 # Send a ping to confirm a successful connection
+username = 'admin'
+password = 'admin123'
+client = initialCLient(username, password)
 try:
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
@@ -28,7 +31,7 @@ questionsCollection = db['questions']
 resultCollection = db['answered_questions']
 
 iterable_list = [1,2,3]
-pipline_list = generate_monogo_template(r"D:\DuyTan_algorithm_demo\config\result_template.json",
+pipline_list = generate_monogo_template(r"/Users/phunghongquan/Documents/DuyTan/DTU_demo_algo/config/result_template.json",
                          [1,2,3])
 # Pull dữ liệu từ Atlas
 for pipeline in pipline_list:
