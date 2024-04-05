@@ -2,6 +2,12 @@ import numpy as np
 import random
 from annoy import AnnoyIndex
 
+'''
+#TODO
+thời gian để update status từ 0->1 sẽ chậm hơn thời gian vòng for chạy.
+có thể sẽ cần lọc thẳng trong pipeline
+'''
+
 def encode(majors):
     ohe = np.zeros(8, dtype=np.int8)  # Hiện có 8 major
     for major in majors:

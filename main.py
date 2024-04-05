@@ -1,6 +1,7 @@
 import pandas as pd
 # import torch
 import json
+import numpy as np
 from pprint import pprint
 import scipy.sparse as sparse
 import pandas as pd
@@ -8,7 +9,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 # from module.processing.pipeline import generate_monogo_template
-from module.processing.pre_processing_pipeline import query_result_data, create_question_player_matrix
+from module.processing.pre_processing_pipeline import query_result_data, create_question_player_matrix, create_dataframe
 from module.annoy.knn_annoy import annoy_knn
 # Initial Mongo Atlas Client
 def initialCLient(username='admin', password='admin123'):
@@ -40,83 +41,19 @@ playersCollection, questionsCollection, resultCollection = get_collection()
 '''
 # degree = [1,2,3,4,5]
 degree = [1]
-result = [annoy_knn(degree=index, players_collection=playersCollection,k=3) # len(result) = k
-          for index in degree] #trả về một object, với mỗi value là 1 object
-
-data_for_algo = query_result_data(result[0], resultCollection) # trả về
-# print(data_for_algo)
-matrix  = create_question_player_matrix(data_for_algo)
-print(matrix)
-
-
-# thử với degree=1
-
-
-
-
-# print(content)
-# result =query_result_data(content, resultCollection)
-# print(result[0])
-
-
-
-# result = annoy_knn(playersCollection,200) # kết quả trả về là mảng bao gồm id của 200 player
+result = [annoy_knn(degree=index, 
+                    players_collection=playersCollection,k=3) # len(result) = k
+                    for index in degree] #trả về một object, với mỗi value là 1 object
 
 '''
-xây pipeline để lấy dữ liệu từ 200 thằng đó ra
+#TODO nhớ chuyển thành vòng for, hiện tại cho đang tính cho 1 Object
+#TODO: cho tên biến mới
+Mục tiêu là trả về toàn bộ đanh sách playerId giống với 
+người được chọn và danh sách câu hỏi của họ
 '''
-# template = [{
-#         "$project": {
-#             "player_id": 1,
-#             "degree": 1,
-#             "ability": 1,
-#             "majot":1,
-#             "mean_time_spent":1,
-#             "std_time_spent":1,        }
-#     }]
+data_for_algo = query_result_data(result[0], resultCollection) 
 
-# playerDataObject = playersCollection.aggregate(pipeline)
-
-# for doc in result:
-#     player_questions = doc["questions"]
-#     for question in player_questions:
-#         question_id = question["_id"]
-#         status = question["status"]
-#         question_statuses[question_id] = status
-# iterable_list = [1,2,3]
-# pipline_list = generate_monogo_template(r"/Users/phunghongquan/Documents/DuyTan/DTU_demo_algo/config/result_template.json",
-#                          [1,2,3])
-
-
-
-
-# Pull dữ liệu từ Atlas
-# for pipeline in pipline_list:
-#     playerDataObject = playersCollection.aggregate(pipeline)
-#     for batch in playerDataObject:
-#     # Process each batch of data
-#     # player_ids = batch["player_id"]
-#     # # player_degree
-#     # questions_lists = batch["questions"]
-    
-#     # print(f"Processing batch for player IDs: {player_ids}")
-#     # print(f"Questions lists: {questions_lists}")
-    
-#         print(batch)
-    # Optionally, clear batch from memory
-    # del batch
-# player_df = pd.DataFrame(list(players_data))
-
-
-
-'''
-#TODO
-thêm tính toán bằng CUDA
-
-dữ liệu đi vào
-    mongo query
-gọi 2 function để tính
-
-trả về dữ liệu cho từng Player_ID
-lưu vào database
-'''
+df= create_dataframe(data_for_algo)
+# print(df1)
+# print(df2)
+print(df)
