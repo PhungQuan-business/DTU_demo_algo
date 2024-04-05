@@ -40,13 +40,13 @@ playersCollection, questionsCollection, resultCollection = get_collection()
 '''
 # degree = [1,2,3,4,5]
 degree = [1]
-result = [annoy_knn(degree=index, players_collection=playersCollection,k=200) 
+result = [annoy_knn(degree=index, players_collection=playersCollection,k=3) # len(result) = k
           for index in degree] #trả về một object, với mỗi value là 1 object
-# print(list(result[0]))
+
 data_for_algo = query_result_data(result[0], resultCollection) # trả về
-print(data_for_algo)
-# matrix  = create_question_player_matrix(result)
-# print(matrix)
+# print(data_for_algo)
+matrix  = create_question_player_matrix(data_for_algo)
+print(matrix)
 
 
 # thử với degree=1
