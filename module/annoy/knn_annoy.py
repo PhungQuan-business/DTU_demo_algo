@@ -10,13 +10,14 @@ def encode(majors):
 
 # hàm này có thể trả về None khi tất cả người chơi đã được tính toán (status = 1)
 # nếu không trả về tối đa k thằng gần nhất
-def annoy_knn(degree, players_collection, k=200):
-    index = AnnoyIndex(8)  # Hiện có 8 major
-
+def annoy_knn(degree, players_collection, k=3):
+    index = AnnoyIndex(8, metric='angular')  # Hiện có 8 major
+    
     # Pipeline này tìm các document trùng degree và status khác 1 sau đó lấy 2 trường _id và major
     pipeline = [
         {"$match": {"degree": degree, "status": {"$ne": 1}}},
-        {"$project": {"major": 1}}
+        {"$project": {"major": 1}},
+        {"$limit":50}
     ]
     data = players_collection.aggregate(pipeline)
     playerIDs_map = {}
@@ -35,6 +36,6 @@ def annoy_knn(degree, players_collection, k=200):
     index.build(n_trees=10)
 
     # getting indices of nearest neighbors
-    nearest_neighbors = index.get_nns_by_item(random.randint(0, num_of_players - 1), 200)
+    nearest_neighbors = index.get_nns_by_item(random.randint(0, num_of_players - 1), k)
 
     return (playerIDs_map[idx] for idx in nearest_neighbors) # Trả về generator
