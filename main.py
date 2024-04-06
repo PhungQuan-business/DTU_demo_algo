@@ -11,7 +11,8 @@ from pymongo.server_api import ServerApi
 # from module.processing.pipeline import generate_monogo_template
 from module.processing.pre_processing_pipeline import query_result_data, create_question_player_matrix, create_dataframe
 from module.annoy.knn_annoy import annoy_knn
-# Initial Mongo Atlas Client
+from module.algorithm.calculate_IFF import calculate_IFF
+
 def initialCLient(username='admin', password='admin123'):
     uri = f'mongodb+srv://{username}:{password}@cluster0.jmil5cr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0' # cái này đẩy vào configure
     client = MongoClient(uri, server_api=ServerApi('1'))
@@ -26,7 +27,7 @@ def initialCLient(username='admin', password='admin123'):
 
 # Query dữ liệu từ Mongo | chuyển thành function
 def get_collection(collection_list=['players', 'questions', 'answered_questions']):
-    client = initialCLient()  # Assuming initialCLient() is a function that returns the client
+    client = initialCLient()
     db = [client['dtu'][collection] for collection in collection_list]
     return db
 
@@ -36,9 +37,6 @@ playersCollection, questionsCollection, resultCollection = get_collection()
 #       "\n\nQuestions Collection:", questionsCollection,
 #       "\n\nAnswered Questions Collection:", resultCollection)
 
-'''
-
-'''
 # degree = [1,2,3,4,5]
 degree = [1]
 result = [annoy_knn(degree=index, 
@@ -48,10 +46,18 @@ result = [annoy_knn(degree=index,
 '''
 #TODO nhớ chuyển thành vòng for, hiện tại cho đang tính cho 1 Object
 #TODO: cho tên biến mới
-Mục tiêu là trả về toàn bộ đanh sách playerId giống với 
-người được chọn và danh sách câu hỏi của họ
 '''
-data_for_algo = query_result_data(result[0], resultCollection, trucking_size=10) 
+data_for_algo = query_result_data(result[0], resultCollection, trucking_size=5) 
 
+# print(data_for_algo)
 df= create_dataframe(data_for_algo)
-print(df)
+df_matrix = np.asarray(df)
+
+# print(df_matrix)
+information_gain = calculate_IFF(df_matrix)
+print(information_gain)
+
+'''
+note for commit comment:
+delete estimate_params.py file
+'''
