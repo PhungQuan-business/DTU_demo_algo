@@ -51,9 +51,7 @@ result = [annoy_knn(degree=index,
 Mục tiêu là trả về toàn bộ đanh sách playerId giống với 
 người được chọn và danh sách câu hỏi của họ
 '''
-data_for_algo = query_result_data(result[0], resultCollection) 
+data_for_algo = query_result_data(result[0], resultCollection, trucking_size=10) 
 
 df= create_dataframe(data_for_algo)
-# print(df1)
-# print(df2)
 print(df)

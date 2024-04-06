@@ -2,46 +2,38 @@ from bson.objectid import ObjectId
 import numpy as np
 
 
-def query_result_data(user_object_ids, collection, trucking:int=None):
-    if trucking is None:
-        trucking = 10
+# TODO đổi lại cái trucking về mặc định là 200
+def query_result_data(user_object_ids, collection, trucking_size:int=None):
+    if trucking_size is None:
+        trucking_size = 200
+    
     pipeline = [
-        {"$match": {"player._id": {"$in": [id for id in user_object_ids]}}},
-        {"$project": {
-            "_id": 0,
+    {
+        "$match": {
+            "player._id": {"$in": [id for id in user_object_ids]}
+        }
+    },
+    {
+        "$project": {
             "player_id": {"$toString": "$player._id"},
-            "100_ques": {"$slice": ["$questions._id", trucking]},
-            # "100_ques_result": "$questions.outcome"
-            "100_ques_result": {"$slice": ["$questions.outcome", trucking]}
-        }}
+            "questions": {"$slice": ["$questions", trucking_size]}  # Slice the questions array to limit its size
+        }
+    },
+    {"$unwind": "$questions"},  # Unwind the sliced questions array
+    {
+        "$project": {
+            "_id": 0,
+            "player_id": 1,
+            "question_id": "$questions._id",
+            "outcome": "$questions.outcome"
+        }
+    }
     ]
-
-    # pipeline2 = [
-    #     {"$match": {"player._id": {"$in": [id for id in user_object_ids]}}},
-    #     {"$project": {
-    #         "player_id": {"$toString": "$player._id"},
-    #         "questions": {"$slice": ["$questions._id", 10]},  # Take first 10 questions
-    #         "results": {"$slice": ["$questions.outcome", 10]}  # Take first 10 results
-    #     }},
-        # {"$unwind": "$questions"},
-        # {"$unwind": "$results"},
-        # {"$project": {
-        #     "player_id": 1,
-        #     "Question_ID": "$questions._id",
-        #     "Result": "$results"
-        # }}
-    # ]
 
     result = list(collection.aggregate(pipeline))
 
     
     return result
-
-'''
-# TODO:
-điều kiện check input phải là numpy(không cần nữa)
-điều chỉnh lại input đầu vào
-'''
 
 def create_question_player_matrix(data):
      # Get unique questions and players
@@ -76,27 +68,10 @@ import pandas as pd
 def create_dataframe(player_question_data):
     # Convert player_question_data into DataFrame
     df = pd.DataFrame(player_question_data)
+    matrix = df.pivot(index='question_id', columns='player_id', values='outcome')
+    # matrix = matrix.fillna(0)
 
-    # Explode '100_ques' and '100_ques_result' columns
-    # df = df.explode('100_ques').explode('100_ques_result')
-    df1 = df[['player_id', '100_ques']]
-    df1 = df1.explode('100_ques')
-
-    df2 = df[['player_id', '100_ques_result']]
-    df2 = df2.explode("100_ques_result")
-    
-    merged_df = pd.merge(df1, df2, on='player_id')
-    merged_df = merged_df.drop_duplicates(subset='player_id')
-    return merged_df
-    # Rename columns
-    merged_df.rename(columns={'100_ques': 'Question_ID', '100_ques_result': 'Result'}, inplace=True)
-
-    # Convert 'player_id' to string
-    merged_df['player_id'] = merged_df['player_id'].astype(str)
-    excel_file_path = r'D:\DuyTan_algorithm_demo\output.csv'
-    merged_df.to_csv(excel_file_path, index=False)
-
-    return merged_df
+    return matrix
 
 # Example usage:
 # df = create_dataframe(player_question_data)
