@@ -3,6 +3,7 @@ scipy
 pandas
 numpy
 annoy
+torch
 
 # cái này là dependencies để cài Surprise
 # scikit-surprise
