@@ -9,7 +9,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 # from module.processing.pipeline import generate_monogo_template
-from module.processing.pre_processing_pipeline import query_result_data, create_question_player_matrix, create_dataframe
+from module.processing.pre_processing_pipeline import query_result_data, create_dataframe
 from module.annoy.knn_annoy import annoy_knn
 from module.algorithm.calculate_IFF import calculate_IFF
 
@@ -49,15 +49,32 @@ result = [annoy_knn(degree=index,
 '''
 data_for_algo = query_result_data(result[0], resultCollection, trucking_size=5) 
 
-# print(data_for_algo)
-df= create_dataframe(data_for_algo)
-df_matrix = np.asarray(df)
+df = create_dataframe(data_for_algo)
+print(df)
+# tạo matrix-1 cùng chiều với với df
+columns_name_list = df.columns
+row__name_list = df.index
+one_df = pd.DataFrame(1, columns=columns_name_list, index=row__name_list)
+# print(one_df)
 
-# print(df_matrix)
-information_gain = calculate_IFF(df_matrix)
+# Tính giá trị phù hợp cho từng người chơi với từng câu hỏi
+df_matrix = np.asarray(df)
+information_gain = np.asarray(calculate_IFF(df_matrix)).T
 print(information_gain)
 
-'''
-note for commit comment:
-delete estimate_params.py file
-'''
+result = one_df.mul(information_gain)
+print(result)
+
+top_questions_indices = {}
+for player_id, column in result.items():
+    # Find the indices of the top 10 questions with highest scores
+    top_indices = column.nlargest(10).index.tolist()
+    # Store the indices in the dictionary
+    top_questions_indices[player_id] = top_indices
+
+print(top_questions_indices)
+
+# '''
+# note for commit comment:
+# delete estimate_params.py file
+# '''

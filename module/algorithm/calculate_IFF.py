@@ -27,6 +27,7 @@ def calculate_IFF(dataset):
     # convert value to int for comaptibility with girth
     
     filled_dataset = handling_null(dataset)
+    print(f'dimension of filled dataset----------->', filled_dataset.ndim)
     estimates = estimate_params(filled_dataset)
 
     alpha = torch.from_numpy(estimates['Discrimination'])
@@ -39,5 +40,6 @@ def calculate_IFF(dataset):
 
     Q_i =  1 - P_i
     information_gain = torch.square(alpha) * (P_i) * (Q_i)
+    print(f'dimension of information gain----------->', information_gain.ndim)
     
     return information_gain

@@ -7,7 +7,7 @@
 # File này đã bị move sang folder mới nên cần sửa lại đường dẫn
 
 
-FROM python:3.10.13-bullseye
+FROM ubuntu:lastest
 
 #change directory
 WORKDIR /usr/app/src
