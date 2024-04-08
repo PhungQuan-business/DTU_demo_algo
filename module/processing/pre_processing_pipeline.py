@@ -3,9 +3,10 @@ import numpy as np
 import pandas as pd
 
 # TODO đổi lại cái trucking về mặc định là 200
+# query những người
 def query_result_data(user_object_ids, collection, trucking_size:int=None):
     if trucking_size is None:
-        trucking_size = 200
+        trucking_size = 100
     
     pipeline = [
     {
