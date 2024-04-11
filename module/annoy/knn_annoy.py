@@ -41,7 +41,9 @@ def annoy_knn(degree, players_collection, k=3):
     # building the index
     index.build(n_trees=10)
 
+
     # getting indices of nearest neighbors
+    # chuyển thành input từ mongo
     nearest_neighbors = index.get_nns_by_item(random.randint(0, num_of_players - 1), k)
 
     return (playerIDs_map[idx] for idx in nearest_neighbors) # Trả về generator
