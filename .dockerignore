@@ -1,0 +1,11 @@
+/docker/*
+/batch_processing.*
+/fake_request_generator.js
+/pratice_callback.js
+/fake_request_generator.js
+/generate_request.py
+/pratice_callback.js
+/general_note.txt
+Dockerfile
+README.md
+/code/*

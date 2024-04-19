@@ -1,0 +1,32 @@
+# deployment.yaml
+#TODO tên image hiện tại đang là RS-image:v1, nhớ build theo tag này
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rs-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rs-app
+  template:
+    metadata:
+      labels:
+        app: rs-app
+    spec:
+      containers:
+      - name: rs-app-container
+        image: docker.io/library/rs-image-new
+        imagePullPolicy: IfNotPresent # must specify
+        # command: ["sleep", "infinity"] # keep the container running 
+        resources:
+          requests:
+            cpu: "100m" # 100 milliCPU
+            memory: "100Mi" # 100 Mebibytes
+          limits:
+            cpu: "200m" # 200 milliCPU
+            memory: "200Mi" # 200 Mebibytes
+        ports:
+        - containerPort: 5000
+      imagePullSecrets:
+        - name: regcred

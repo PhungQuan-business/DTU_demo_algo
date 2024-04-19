@@ -1,0 +1,15 @@
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: rs-service
+  # tìm hiểu về cách dùng namespace
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: NodePort
+  selector:
+    app: rs-app
+  
