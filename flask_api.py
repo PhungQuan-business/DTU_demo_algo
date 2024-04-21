@@ -55,6 +55,8 @@ def output():
     else:
         return jsonify({'error': 'Player not found'}), 404
     
+#TODO find way to store the port value in some where else, avoid manual modify everytime like this
 if __name__ == '__main__':
+    # app.run(debug=True, host='0.0.0.0', port=31814)
     app.run(debug=True, host='0.0.0.0')
 

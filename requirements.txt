@@ -1,9 +1,5 @@
 pymongo
-scipy
-pandas
-numpy
-annoy
-torch
+flask
 
 # cái này là dependencies để cài Surprise
 # scikit-surprise
@@ -14,3 +10,8 @@ torch
 # flask-restplus
 # Flask-RESTful
 # pymongo
+# scipy
+# pandas
+# numpy
+# annoy
+# torch

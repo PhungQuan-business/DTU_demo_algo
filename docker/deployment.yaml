@@ -16,16 +16,16 @@ spec:
     spec:
       containers:
       - name: rs-app-container
-        image: docker.io/library/rs-image-new
+        image: docker.io/library/rs-image-v1
         imagePullPolicy: IfNotPresent # must specify
         # command: ["sleep", "infinity"] # keep the container running 
         resources:
           requests:
-            cpu: "100m" # 100 milliCPU
-            memory: "100Mi" # 100 Mebibytes
+            cpu: "15m" # 100 milliCPU
+            memory: "50Mi" # 100 Mebibytes
           limits:
-            cpu: "200m" # 200 milliCPU
-            memory: "200Mi" # 200 Mebibytes
+            cpu: "20m" # 200 milliCPU
+            memory: "100Mi" # 200 Mebibytes
         ports:
         - containerPort: 5000
       imagePullSecrets:
