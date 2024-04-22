@@ -4,8 +4,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rs-deployment
+  labels:
+    app: rs-app
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: rs-app
@@ -18,15 +20,16 @@ spec:
       - name: rs-app-container
         image: docker.io/library/rs-image-v1
         imagePullPolicy: IfNotPresent # must specify
-        # command: ["sleep", "infinity"] # keep the container running 
+        # command: ["sleep", "infinity"] 
         resources:
           requests:
-            cpu: "15m" # 100 milliCPU
-            memory: "50Mi" # 100 Mebibytes
-          limits:
-            cpu: "20m" # 200 milliCPU
-            memory: "100Mi" # 200 Mebibytes
+            cpu: "100m" # 100 milliCPU
+            memory: "150Mi" # 100 Mebibytes
+          # limits:
+          #   cpu: "150m" # 200 milliCPU
+          #   memory: "150Mi" # 200 Mebibytes
         ports:
         - containerPort: 5000
       imagePullSecrets:
         - name: regcred
+
