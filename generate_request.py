@@ -3,54 +3,71 @@ from concurrent.futures import ThreadPoolExecutor
 import sys
 import time
 import random
+import json
 
-# Function to make request with player_id
-def make_request(player_id):
-    url = 'http://192.168.49.2:30796/output'
-    params = {'player_id': player_id}
-    response = requests.get(url, params=params)
+# Function to make request with player_ids batch
+def make_request_batch(player_ids_batch):
+    # url = 'http://192.168.49.2:30796/process_batch'
+    url = 'http://127.0.0.1:5000/process_batch'
+    data = {'playersObjectId': player_ids_batch}
+    headers = {'Content-Type': 'application/json'}
+    response = requests.get(url, data=json.dumps(data), headers=headers)
     
     if response.status_code == 200:
-        # print(f"Player ID {player_id}: {response.text}")
+        # print(f"Batch: {player_ids_batch}: {response.text}")
         # print('ok')
         pass
     else:
-        print(f"Error for Player ID {player_id}: {response.status_code}")
+        print(f"Error for Batch: {player_ids_batch}: {response.status_code}")
 
-# Read player IDs from file
-def read_player_ids(filename):
+# Read player IDs from file and split into batches
+def read_player_ids(filename, batch_size, truncate=None):
     with open(filename, 'r') as file:
         player_ids = [line.strip() for line in file]
-    return player_ids
+        
+        # If truncate is None, default to 1000
+        if truncate is None:
+            truncate = 100
+        # If truncate is 'all', take all values in the input file
+        elif truncate == 'all':
+            truncate = len(player_ids)
+        
+        # Truncate the list if necessary
+        player_ids = player_ids[:truncate]
+    
+    # Shuffle the player IDs to randomize
+    random.shuffle(player_ids)
+    
+    # Split into batches
+    player_ids_batches = [player_ids[i:i+batch_size] for i in range(0, len(player_ids), batch_size)]
+    return player_ids_batches
+
 
 # Main function
 def main():
-    filename =  r'/home/quan/Documents/DTU_demo_algo/new_objectidv1.txt'  # File containing player IDs, one per line
-    player_ids = read_player_ids(filename)
-    # random_player_id = player_ids[:100]
-    random_player_id = random.sample(player_ids, k=10000)
-
-    # start_time = time.time()
-    # for id in random_player_id:
+    filename =  r'objectid_v2.txt'  # File containing player IDs, one per line
+    batch_size = 50  # Batch size for each request
+    truncate = None
+    max_workers = 3
+    
+    # tạo ra các batch người chơi
+    player_ids_batches = read_player_ids(filename, batch_size, truncate=truncate)
+    # data = {'playersObjectId': player_ids_batches}
+    # json_data = json.dumps(data)
+    start_time = time.time()   
+    make_request_batch(player_ids_batch=player_ids_batches)
+    # with ThreadPoolExecutor(max_workers=max_workers) as executor:
     #     try:
-    #         make_request(id)
+    #         executor.map(make_request_batch, player_ids_batches[0])
     #     except KeyboardInterrupt:
     #         print("Ctrl+C detected. Shutting down...")
+    #         executor.shutdown(wait=False)
     #         sys.exit(1)
-    # Number of concurrent requests
-    max_workers = 20
-    # for i in range(10):
-    start_time = time.time()   
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        try:
-            executor.map(make_request, random_player_id)
-        except KeyboardInterrupt:
-            print("Ctrl+C detected. Shutting down...")
-            executor.shutdown(wait=False)
-            sys.exit(1)
     end_time = time.time()
     time_took = end_time - start_time
-    print(f'Time it took to process 10000 request with parallel processing the time is: ', time_took)
+    # print(f'Time it took to process all requests with parallel processing: {time_took} seconds')
+    print(f'Time it took to process all requests without parallel processing: {time_took} seconds')
+    # print(json_data)
 
 if __name__ == "__main__":
     main()

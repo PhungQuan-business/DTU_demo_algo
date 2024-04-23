@@ -1,5 +1,13 @@
 pymongo
 flask
+pymongo
+pandas
+numpy
+scikit-learn
+torch
+implicit
+scipy
+py-irt
 
 # cái này là dependencies để cài Surprise
 # scikit-surprise
