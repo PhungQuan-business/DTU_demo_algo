@@ -30,26 +30,29 @@ làm cái queue như nào, nó ở trong hay ngoài thuật toán
 '''
 
 
-
-
 def initialCLient(username='quan', password='admin'):
     # uri = f'mongodb+srv://{username}:{password}@cluster0.jmil5cr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0' # cái này đẩy vào configure
-    uri = f'mongodb+srv://quan:admin@cluster0.jmil5cr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0' # cái này đẩy vào configure
+    # cái này đẩy vào configure
+    uri = f'mongodb+srv://quan:admin@cluster0.jmil5cr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
     client = MongoClient(uri, server_api=ServerApi('1'))
-    
+
     try:
         client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print(e)
-    
+
     return client
+
 
 def get_collection(collection_list=['players', 'questions', 'answered_questions']):
     client = initialCLient()
     db = [client['dtu'][collection] for collection in collection_list]
     return db
+
+
 playersCollection, questionsCollection, resultCollection = get_collection()
+
 
 def recommend(batch):
     data = get_player_data(batch)
@@ -68,13 +71,14 @@ def recommend(batch):
         )
         model = implicit.als.AlternatingLeastSquares()
         model.fit(sparse_player_ques)
-        for player_id in dataset.observation_subjects:
+        for player_id, player_ix in dataset.subject_id_to_ix.items():
             ids, _ = model.recommend(
-                player_id, sparse_player_ques[player_id], N=10, filter_already_liked_items=True
+                player_ix, sparse_player_ques[player_ix], N=10, filter_already_liked_items=True
             )
-            result[ObjectId(dataset.ix_to_subject_id[player_id])] = [
+            result[ObjectId(player_id)] = [
                 ObjectId(dataset.ix_to_item_id[id]) for id in ids]
     return result
+
 
 def get_player_data(batch):
     threshold = 0
@@ -117,6 +121,7 @@ def get_player_data(batch):
 
     return clusters
 
+
 def player_clustering(batch):
     # Số cụm phân thành
     n_clusters = 5
@@ -151,6 +156,7 @@ def player_clustering(batch):
 
     return clusters
 
+
 def estimate_params(dataset, **config):
     # num_of_players = len(dataset.ix_to_subject_id)
     # num_of_questions = len(dataset.ix_to_item_id)
@@ -169,6 +175,7 @@ def estimate_params(dataset, **config):
     trainer.train(device=device)
 
     return trainer.irt_model.export()
+
 
 def calculate_IFF(dataset):
     device = torch.device(
@@ -189,7 +196,9 @@ def calculate_IFF(dataset):
 
     return information_gain
 
+
 app = Flask(__name__)
+
 
 @app.route('/process_batch')
 def process_batch():
@@ -198,17 +207,18 @@ def process_batch():
     # cần thống nhất lại xem param có bao gồm "ObjectID" không
     # 1 batch
     object_ids_batch = [ObjectId(id) for id in playersObjectId[0]]
-    
+
     result = recommend(object_ids_batch)
     if result:
-        result_str = {str(key): [str(oid) for oid in value] for key, value in result.items()}
+        result_str = {str(key): [str(oid) for oid in value]
+                      for key, value in result.items()}
         # Convert to JSON
         json_result = json.dumps(result_str)
         print(json_result)
         return jsonify(json_result)
     else:
         return jsonify({'error': 'Player not found'}), 404
-    
+
 
 if __name__ == '__main__':
     # app.run(debug=True, host='0.0.0.0', port=31814)
@@ -219,20 +229,20 @@ if __name__ == '__main__':
 # def read_player_ids(filename, batch_size, truncate=None):
 #     with open(filename, 'r') as file:
 #         player_ids = [line.strip() for line in file]
-        
+
 #     # If truncate is None, default to 1000
 #     if truncate is None:
 #         truncate = 1000
 #     # If truncate is 'all', take all values in the input file
 #     elif truncate == 'all':
 #         truncate = len(player_ids)
-    
+
 #     # Truncate the list if necessary
 #     player_ids = player_ids[:truncate]
-    
+
 #     # Shuffle the player IDs to randomize
 #     random.shuffle(player_ids)
-    
+
 #     # Split into batches
 #     player_ids_batches = [player_ids[i:i+batch_size] for i in range(0, len(player_ids), batch_size)]
 #     return player_ids_batches
@@ -247,6 +257,3 @@ if __name__ == '__main__':
 #     print(recommend_result)
 
 # process_batch()
-
-
-
